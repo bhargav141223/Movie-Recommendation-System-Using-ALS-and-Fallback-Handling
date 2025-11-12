@@ -348,23 +348,6 @@ Visit `http://127.0.0.1:8000/export-ratings/` to download ratings CSV.
 
 ---
 
-## 📸 Screenshots
-
-### Home Page
-Landing page with search functionality and background video.
-
-### Login Page
-Custom login interface with movie banner image.
-
-### Library Page
-Browse movies with genre filtering, search bar, and rating stars.
-
-### Recommendations Page
-Personalized movie recommendations with posters and watch buttons.
-
-### My Ratings Page
-Complete rating history with export option.
-
 ---
 
 ## 🔧 Configuration
@@ -428,11 +411,6 @@ openpyxl  # For Excel exports (optional)
 
 ---
 
-## 📄 License
-
-This project is for educational and demonstration purposes.
-
----
 
 ## 🤝 Contributing
 
@@ -442,7 +420,26 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 
 ## 📧 Contact
 
-For questions or feedback, please open an issue in this repository.
+ **Kuppam Bhargav Reddy**
+ _Department of Artificial Intelligence_
+ _Amrita School of Artificial Intelligence, Bengaluru_
+ _Amrita Vishwa Vidyapeetham, India_
+ bl.en.u4aid23028@bl.students.amrita.edu
+ 
+- **Likhit Hegde**
+ _Department of Artificial Intelligence_
+ _Amrita School of Artificial Intelligence, Bengaluru_
+ _Amrita Vishwa Vidyapeetham, India_
+ bl.en.u4aid23029@bl.students.amrita.edu
+
+- **N Viswa Vardhan Reddy**
+ _Department of Artificial Intelligence_
+ _Amrita School of Artificial Intelligence, Bengaluru_
+ _Amrita Vishwa Vidyapeetham, India_
+ bl.en.u4aid23035@bl.students.amrita.edu
+
+
+**Built with ❤️ using Apache Spark and Django**
 
 ---
 
