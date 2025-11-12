@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BDA Project Flowchart</title>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
+  <style>
+    body{margin:0;background:#0b0f19;color:#fff;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
+    a{color:#9edbff;text-decoration:none}
+    .top{display:flex;justify-content:space-between;align-items:center}
+    .box{background:#0f152b;border:1px solid #253158;border-radius:12px;padding:10px;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h2 style="margin:0">BDA Project Flowchart</h2>
+      <div><a href="/">Home</a></div>
+    </div>
+    <div class="box">
+    <pre class="mermaid">
+flowchart TD
+  U[User Browser] -->|GET /| H[Home]
+  U -->|GET/POST /login, /signup| AUTH[Auth]
+  AUTH -->|OK| LIB[Library: search, genre, rate]
+  U -->|GET /movies| MOV[Movies: browse]
+  U -->|GET /my-ratings| MYR[My Ratings]
+  U -->|GET /export-ratings| EX[Export Ratings CSV]
+
+  subgraph R[Runtime Data & Services]
+    MCSV[(movies.csv)]
+    ITK[(static/item_topk.parquet)]
+    DEMO[(static/demo_model.parquet)]
+    DB[(db.sqlite3\nusers, ratings, poster cache)]
+    OMDB[(OMDb API\nOMDB_API_KEY in .env)]
+  end
+
+  LIB --> MCSV
+  MOV --> MCSV
+
+  LIB -->|POST /rate| RATE[Save Rating]
+  RATE --> DB
+  RATE --> RESOLVE[Resolve title → movieId]
+
+  H -->|POST / (movie_name)| RESOLVE
+
+  RESOLVE --> CHK{item_topk exists?}
+  CHK -- Yes --> TOPK[Read Top-K neighbors\n(item_topk.parquet)]
+  CHK -- No --> DENSE[Read dense similarity\n(demo_model.parquet)]
+  TOPK --> RECS[Recommended titles]
+  DENSE --> RECS
+  RECS --> POSTERS[fetch_poster(title)]
+  POSTERS --> OMDB
+  RECS --> UI1[Render: result/recommendations pages]
+
+  MYR --> DB
+  EX --> DB
+
+  subgraph O[Offline: Spark + ALS (BDA_PROJECT.ipynb)]
+    S1[Load CSVs in Spark]
+    S2[Schema, OLAP: counts, distincts, groupBy]
+    S3[Train ALS (userId, movieId, rating)]
+    S4[Item factors → cosine Top‑K]
+    S5[Export item_topk.parquet]
+  end
+
+  S1 --> S2 --> S3 --> S4 --> S5 --> ITK
+    </pre>
+    </div>
+    <p style="opacity:.8;margin-top:10px">Tip: Right-click → Save as to export the diagram as an image, or use your browser's screenshot.</p>
+  </div>
+</body>
+</html>

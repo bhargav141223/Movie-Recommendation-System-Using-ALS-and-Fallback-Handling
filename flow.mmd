@@ -1,0 +1,54 @@
+flowchart TD
+  %% USER JOURNEY
+  U[User Browser] -->|GET /| H[Home (/)]
+  U -->|GET/POST /login, /signup| AUTH[Auth]
+  AUTH -->|OK| LIB[Library: search + genre + rate]
+  U -->|GET /movies| MOV[Movies: browse]
+  U -->|GET /my-ratings| MYR[My Ratings]
+  U -->|GET /export-ratings| EX[Export Ratings CSV]
+
+  %% RUNTIME DATA & SERVICES
+  subgraph R[Runtime Data & Services]
+    MCSV[(movies.csv)]
+    ITK[(static/item_topk.parquet)]
+    DEMO[(static/demo_model.parquet)]
+    DB[(db.sqlite3\nusers, ratings, poster cache)]
+    OMDB[(OMDb API\nOMDB_API_KEY in .env)]
+  end
+
+  %% TITLES FOR BROWSE
+  LIB --> MCSV
+  MOV --> MCSV
+
+  %% RATE FLOW
+  LIB -->|POST /rate| RATE[Save Rating]
+  RATE --> DB
+  RATE --> RES[Resolve title → movieId]
+
+  %% SEARCH FLOW
+  H -->|POST / with movie_name| RES
+
+  %% RECOMMENDATION PATH
+  RES --> CHK{item_topk present?}
+  CHK -- Yes --> TOPK[Top‑K neighbors\n(item_topk.parquet)]
+  CHK -- No --> DENSE[Dense similarity\n(demo_model.parquet)]
+  TOPK --> RECS[Recommended titles]
+  DENSE --> RECS
+  RECS --> POST[fetch_poster(title)]
+  POST --> OMDB
+  RECS --> UI[Render: result.html / recommendations.html\nwith posters + Watch links]
+
+  %% USER DATA
+  MYR --> DB
+  EX --> DB
+
+  %% OFFLINE BIG DATA (SPARK ALS)
+  subgraph O[Offline: Spark + ALS (BDA_PROJECT.ipynb)]
+    S1[Load CSVs in Spark]
+    S2[OLAP: counts, distincts, distributions]
+    S3[Train ALS (userId, movieId, rating)]
+    S4[Item factors → cosine Top‑K]
+    S5[Export item_topk.parquet]
+  end
+
+  S1 --> S2 --> S3 --> S4 --> S5 --> ITK

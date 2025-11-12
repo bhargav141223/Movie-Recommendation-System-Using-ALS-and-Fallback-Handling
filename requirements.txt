@@ -1,0 +1,21 @@
+# Core Web Framework
+django>=5.2.8
+gunicorn>=20.1.0
+whitenoise>=6.0.0
+
+# Data Processing
+pandas>=2.0.0
+pyarrow>=12.0.0
+fastparquet>=2023.0.0
+
+# HTTP & API
+requests>=2.31.0
+
+# Environment & Configuration
+python-dotenv>=1.0.0
+
+# Excel Export (Optional)
+openpyxl>=3.1.0
+
+# Build Tools
+wheel>=0.40.0
